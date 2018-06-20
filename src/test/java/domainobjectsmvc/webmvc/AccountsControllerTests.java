@@ -75,6 +75,7 @@ public class AccountsControllerTests {
 			.andExpect(status().isOk())
 			.andExpect(model().attribute("account", is(account)))
 			.andExpect(view().name("accounts/show"));
+		verify(accountRepository).findById(eq(id));
 	}
 
 	@Test
@@ -95,6 +96,7 @@ public class AccountsControllerTests {
 			.andExpect(status().isOk())
 			.andExpect(model().attribute("account", is(account)))
 			.andExpect(view().name("accounts/edit"));
+		verify(accountRepository).findById(eq(id));
 	}
 
 	@Test
@@ -113,7 +115,8 @@ public class AccountsControllerTests {
 			.thenReturn(Optional.of(account));
 		mvc.perform(put("/accounts/{id}", id))
 			.andExpect(redirectedUrl("/accounts"));
-		verify(accountRepository).save(account);
+		verify(accountRepository).findById(eq(id));
+		verify(accountRepository).save(eq(account));
 	}
 
 	/*
@@ -164,6 +167,7 @@ public class AccountsControllerTests {
 			.thenReturn(Optional.of(account));
 		mvc.perform(delete("/accounts/{id}", id))
 			.andExpect(redirectedUrl("/accounts"));
+		verify(accountRepository).findById(eq(id));
 		verify(accountRepository).delete(eq(account));
 	}
 

@@ -77,6 +77,7 @@ public class GeneratedIdEntitiesControllerTests {
 			.andExpect(status().isOk())
 			.andExpect(model().attribute("entity", is(entity)))
 			.andExpect(view().name("entities/show"));
+		verify(entityRepository).findById(eq(id));
 	}
 
 	@Test
@@ -115,7 +116,8 @@ public class GeneratedIdEntitiesControllerTests {
 			.thenReturn(Optional.of(entity));
 		mvc.perform(put("/entities/{id}", id))
 			.andExpect(redirectedUrl("/entities"));
-		verify(entityRepository).save(entity);
+		verify(entityRepository).findById(eq(id));
+		verify(entityRepository).save(eq(entity));
 	}
 
 	/*
@@ -145,6 +147,7 @@ public class GeneratedIdEntitiesControllerTests {
 			.then(AdditionalAnswers.returnsFirstArg());
 		mvc.perform(post("/entities"))
 			.andExpect(redirectedUrl("/entities"));
+		verify(entityRepository, times(0)).findById(anyLong());
 		verify(entityRepository).save(any(GeneratedIdEntity.class));
 	}
 
@@ -163,6 +166,7 @@ public class GeneratedIdEntitiesControllerTests {
 			.thenReturn(Optional.of(entity));
 		mvc.perform(delete("/entities/{id}", id))
 			.andExpect(redirectedUrl("/entities"));
+		verify(entityRepository).findById(eq(id));
 		verify(entityRepository).delete(eq(entity));
 	}
 

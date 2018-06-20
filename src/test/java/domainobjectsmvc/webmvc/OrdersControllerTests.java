@@ -8,6 +8,7 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -90,6 +91,7 @@ public class OrdersControllerTests {
 			.andExpect(model().attribute(
 					"orderForm", is(orderForm)))
 			.andExpect(view().name("orders/show"));
+		verify(orderRepository).findById(eq(id));
 	}
 
 	@Test
@@ -111,6 +113,7 @@ public class OrdersControllerTests {
 			.andExpect(status().isOk())
 			.andExpect(model().attribute("orderForm", is(orderForm)))
 			.andExpect(view().name("orders/edit"));
+		verify(orderRepository).findById(eq(id));
 	}
 
 	@Test
@@ -147,7 +150,8 @@ public class OrdersControllerTests {
 		assertThat(order.getItems(), hasItem(allOf(
 				hasProperty("productId", equalTo(new ProductId("zzz"))),
 				hasProperty("quantity", equalTo(5)))));
-		verify(orderRepository).save(order);
+		verify(orderRepository).findById(eq(id));
+		verify(orderRepository).save(eq(order));
 	}
 
 	@Test
@@ -164,6 +168,7 @@ public class OrdersControllerTests {
 			.andExpect(model().attributeHasFieldErrors("orderForm", "items[0].quantity"))
 			.andExpect(model().attribute("orderForm", is(orderForm)))
 			.andExpect(view().name("orders/edit"));
+		verify(orderRepository).findById(eq(id));
 	}
 
 	@Test
@@ -198,6 +203,7 @@ public class OrdersControllerTests {
 			.thenReturn(Optional.of(entity));
 		mvc.perform(delete("/orders/{id}", id))
 			.andExpect(redirectedUrl("/orders"));
+		verify(orderRepository).findById(eq(id));
 		verify(orderRepository).delete(eq(entity));
 	}
 
