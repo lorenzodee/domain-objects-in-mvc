@@ -47,7 +47,7 @@ If we need a controller to provide a web-based interface to that particular enti
 
 You might think that it would be necessary to either add a setter method (`setId`) to the entity class. Or, in the controller class, add code that would retrieve the existing entity by ID, and manually merge the entities. These two approaches will work. **But there's an easier way!**
 
-We use a `@ModelAttribute` method in the controller. Spring MVC will invoked this method *prior* to the mapped request handler. This is a convenient way to retrieve the existing entity, and Spring will bind the request parameters to it. The revised controller code would look something like:
+We use a `@ModelAttribute` method in the controller. Spring MVC will invoke this method *prior* to the mapped request handler. This is a convenient way to retrieve the existing entity, and Spring will bind the request parameters to it. The revised controller code would look something like:
 
 ```java
 @Controller
