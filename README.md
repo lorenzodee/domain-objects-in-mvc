@@ -166,7 +166,7 @@ When Spring MVC gets a "items[0].quantity" request parameter, it will expect tha
 
 Obviously, the domain entity will need a significant overhaul just to make Spring MVC happy. But there is an easier way!
 
-Instead of *fighting* against persistence mapping and web frameworks, we define another type that is JavaBean-like to make binding easy in Spring MVC. This type is knows how to use the domain entity and its children. But the domain entity does not need to know about this type. It looks something like this:
+Instead of *fighting* against persistence mapping and web frameworks, we define another type that is JavaBean-like to make binding easy in Spring MVC. This type knows how to use the domain entity and its children. But the domain entity does not need to know about this type. It looks something like this:
 
 ```java
 ... class OrderForm {
@@ -184,7 +184,9 @@ Instead of *fighting* against persistence mapping and web frameworks, we define 
 }
 ```
 
-How do we use these in a controller?
+Specifically, `OrderForm` knows about the `Order` and `OrderItem` domain objects, but the `Order` and `OrderItem` domain objects do not know about `OrderForm`.
+
+So, how do we use these in a controller?
 
 ```java
 @Controller
