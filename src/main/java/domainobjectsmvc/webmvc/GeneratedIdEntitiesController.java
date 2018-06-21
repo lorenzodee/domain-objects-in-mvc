@@ -64,19 +64,19 @@ public class GeneratedIdEntitiesController {
 
 	@GetMapping("/{id}")
 	public String show(@PathVariable Long id
-			/* , @ModelAttribute GeneratedIdEntity entity */) {
+			/* , @ModelAttribute("entity") GeneratedIdEntity entity */) {
 		return "entities/show";
 	}
 
 	@GetMapping(path="/{id}", params="edit")
 	public String edit(@PathVariable Long id
-			/* , @ModelAttribute GeneratedIdEntity entity */) {
+			/* , @ModelAttribute("entity") GeneratedIdEntity entity */) {
 		return "entities/edit";
 	}
 
 	@PutMapping("/{id}")
 	public String update(@PathVariable Long id,
-			@ModelAttribute @Valid GeneratedIdEntity entity, BindingResult bindingResult) {
+			@ModelAttribute("entity") @Valid GeneratedIdEntity entity, BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
 			return "entities/edit";
 		}
@@ -85,14 +85,16 @@ public class GeneratedIdEntitiesController {
 	}
 
 	@GetMapping(params="create")
-	public String create(GeneratedIdEntity entity, Model model) {
-		model.addAttribute("entity", entity);
+	public String create(
+			/* @ModelAttribute("entity") GeneratedIdEntity entity, Model model */) {
+		// model.addAttribute("entity", entity);
 		return "entities/create";
 	}
 
 	@PostMapping
 	public String save(
-			@ModelAttribute @Valid GeneratedIdEntity entity, BindingResult bindingResult) {
+			@ModelAttribute("entity") @Valid GeneratedIdEntity entity,
+			BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
 			return "entities/edit";
 		}
@@ -101,7 +103,7 @@ public class GeneratedIdEntitiesController {
 	}
 
 	@DeleteMapping("/{id}")
-	public String delete(@ModelAttribute GeneratedIdEntity entity) {
+	public String delete(@ModelAttribute("entity") GeneratedIdEntity entity) {
 		entityRepository.delete(entity);
 		return "redirect:/entities";
 	}
