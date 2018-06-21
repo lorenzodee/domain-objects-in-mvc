@@ -1,6 +1,6 @@
 # Dealing with Domain Objects in Spring MVC
 
-This contains sample code that shows how to deal with domain object in Spring MVC (also discussed in my blog post). Specifically, the code contained in here deals with the following cases:
+This contains sample code that shows how to deal with (not-so-JavaBean-like) domain objects in Spring MVC (also discussed in [my blog post](http://lorenzo-dee.blogspot.com/2018/06/domain-objects-in-spring-mvc.html)). Specifically, the code contained in here deals with the following cases:
 
 1. No setter for generated ID field (i.e. the generated ID field has a getter but no setter)
 2. No default constructor (e.g. no public zero-arguments constructor)
@@ -227,4 +227,55 @@ So, how do we use these in a controller?
 ```
 
 Please see [Order](src/main/java/domainobjectsmvc/domain/model/Order.java), [OrdersController](src/main/java/domainobjectsmvc/webmvc/OrdersController.java) and [OrdersControllerTests](src/test/java/domainobjectsmvc/webmvc/OrdersControllerTests.java) for more details.
+
+## *Bonus:* Handling JPA @Version Field
+
+Another scenario is to have the Spring MVC controller show an error when the entity being updated has been modified since it was last retrieved. This is also referred to as optimistic locking failure.
+
+For domain objects that are mapped as JPA entities, optimistic locking is usually implemented using the `@Version` field. Just like the `@Id` field, the `@Version` field usually does not have a setter method.
+
+```java
+@Entity
+... class ... {
+    @Id @GeneratedValue(...)
+    private Long id;
+    @Version
+    private int version;
+    ...
+    public Long getId() { return id; }
+    // but no setter method for "id" field
+    public int getVersion() { return version; }
+    // but no setter method for "version" field
+}
+```
+
+So, how can we support this in Spring MVC?
+
+Note that the HTML <form> will have the "version" field value as a hidden input field.
+
+Since we do not want Spring MVC to bind the "version" request parameter to the domain object, we explicitly declare it as a request parameter in the request handling method. Something like this:
+
+```java
+@Controller
+@RequestMapping(...)
+... class ... {
+    ...
+    @PutMapping("/{id}")
+    public String update(@PathVariable Long id,
+            @ModelAttribute ... entity, BindingResult bindingResult,
+            @RequestParam int version) {
+        if (entity.getVersion() != version) {
+            bindingResult.reject("error.version", "...");
+        }
+        if (bindingResult.hasErrors()) {
+            return "...";
+        }
+        entityRepository.save(entity);
+        return "...";
+    }
+    ...
+}
+```
+
+When an optimistic locking failure occurs, the rendered view should allow the user to conveniently *reload* the edit page. That way, s/he will get the latest version, and her/his subsequent form submission (`PUT`) will succeed.
 
